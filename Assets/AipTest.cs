@@ -20,9 +20,10 @@ public class AipTest : MonoBehaviour
     public string text = "百度是一家高科技公司";
     public string log;
 
-    [SerializeField] private Button NLPLexicalButton;
-    [SerializeField] private Button NLPSyntacticButton;
+    [SerializeField] private Button LexicalButton;
+    [SerializeField] private Button SyntacticButton;
     [SerializeField] private Button WordEmbeddingButton;
+    [SerializeField] private Button DnnlmCnButton;
 
     void Awake()
     {
@@ -36,16 +37,18 @@ public class AipTest : MonoBehaviour
                return true; // **** Always accept
            };
 
-        NLPLexicalButton.onClick.AddListener(NLPLexical);
-        NLPSyntacticButton.onClick.AddListener(NLPSyntactic);
+        LexicalButton.onClick.AddListener(NLPLexical);
+        SyntacticButton.onClick.AddListener(NLPSyntactic);
         WordEmbeddingButton.onClick.AddListener(NLPWordEmbedding);
+        DnnlmCnButton.onClick.AddListener(NLPDnnlmCn);
     }
 
     void OnDestroy()
     {
-        NLPLexicalButton.onClick.RemoveListener(NLPLexical);
-        NLPSyntacticButton.onClick.RemoveListener(NLPSyntactic);
+        LexicalButton.onClick.RemoveListener(NLPLexical);
+        SyntacticButton.onClick.RemoveListener(NLPSyntactic);
         WordEmbeddingButton.onClick.RemoveListener(NLPWordEmbedding);
+        DnnlmCnButton.onClick.RemoveListener(NLPDnnlmCn);
     }
 
     void Start()
@@ -60,7 +63,7 @@ public class AipTest : MonoBehaviour
         //百度是一家高科技公司
 
         log = "";
-        JArray array = Demo.LexerDemo(text).items;
+        JArray array = NLPDemo.LexerDemo(text).items;
         for (int i = 0; i < array.Count; i++)
         {
             log += array[i]["item"].ToString();
@@ -76,7 +79,7 @@ public class AipTest : MonoBehaviour
         text = "今天天气怎么样";
 
         log = "";
-        JArray array = Demo.DepParserDemo(text).items;
+        JArray array = NLPDemo.DepParserDemo(text).items;
         for (int i = 0; i < array.Count; i++)
         {
             log += array[i]["word"].ToString();
@@ -88,7 +91,29 @@ public class AipTest : MonoBehaviour
     // 词向量表示
     void NLPWordEmbedding()
     {
+        text = "张飞";
+        log = "";
+        JArray array = NLPDemo.WordEmbeddingDemo(text).vec;
+        for (int i = 0; i < array.Count; i++)
+        {
+            log += array[i].ToString();
+            log += " | ";
+        }
+        Debug.Log(log);
+    }
 
+    // DNN语言模型
+    void NLPDnnlmCn()
+    {
+        text = "床前明月光";
+        log = "";
+        JArray array = NLPDemo.DnnlmCnDemo(text).items;
+        for (int i = 0; i < array.Count; i++)
+        {
+            log += array[i]["word"].ToString() + array[i]["prob"].ToString();
+            log += " | ";
+        }
+        Debug.Log(log);
     }
 
     // 使用Newtonsoft.Json 序列化/反序列化
