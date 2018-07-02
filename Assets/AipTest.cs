@@ -9,6 +9,7 @@ using Baidu.Aip.Nlp;
 using Baidu.Aip.Ocr;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 public class AipTest : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class AipTest : MonoBehaviour
     [SerializeField] private Button SyntacticButton;
     [SerializeField] private Button WordEmbeddingButton;
     [SerializeField] private Button DnnlmCnButton;
+    [SerializeField] private Button WordSimEmbeddingButton;
 
     void Awake()
     {
@@ -41,6 +43,7 @@ public class AipTest : MonoBehaviour
         SyntacticButton.onClick.AddListener(NLPSyntactic);
         WordEmbeddingButton.onClick.AddListener(NLPWordEmbedding);
         DnnlmCnButton.onClick.AddListener(NLPDnnlmCn);
+        WordSimEmbeddingButton.onClick.AddListener(WordSimEmbedding);
     }
 
     void OnDestroy()
@@ -49,6 +52,7 @@ public class AipTest : MonoBehaviour
         SyntacticButton.onClick.RemoveListener(NLPSyntactic);
         WordEmbeddingButton.onClick.RemoveListener(NLPWordEmbedding);
         DnnlmCnButton.onClick.RemoveListener(NLPDnnlmCn);
+        WordSimEmbeddingButton.onClick.RemoveListener(WordSimEmbedding);
     }
 
     void Start()
@@ -116,6 +120,23 @@ public class AipTest : MonoBehaviour
         Debug.Log(log);
     }
 
+    // 词义相似度
+    void WordSimEmbedding()
+    {
+        //var options = new Dictionary<string, object>{{"mode", 0}};
+
+        string log = "";
+        var array = NLPDemo.WordSimEmbeddingDemo("北京", "上海").score;
+        /*
+        for (int i = 0; i < array.Count; i++)
+        {
+            log += array[0]["word_1"].ToString() + array[0]["word_2"].ToString();
+            log += " | ";
+        }
+        */
+        Debug.Log(array);
+    }
+
     // 使用Newtonsoft.Json 序列化/反序列化
     void HowToUseNewtonsoft()
     {
@@ -131,7 +152,6 @@ public class AipTest : MonoBehaviour
         var Object = JsonConvert.DeserializeObject<CharacterListItem>(json);
         //Debug.Log(Object.Name);
     }
-    
 }
 
 [System.Serializable]

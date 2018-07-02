@@ -113,23 +113,29 @@ namespace NLPForUnity
 
         // 词义相似度
         // 两个文本相似度得分
-        public static void WordSimEmbeddingDemo(string word1, string word2)
+        public static WordSimEmbeddingSerialize WordSimEmbeddingDemo(string word1, string word2, Dictionary<string, object> options = null)
         {
             //"北京", "上海"
             client = new Nlp(API_KEY, SECRET_KEY);
 
             // 调用词义相似度，可能会抛出网络等异常，请使用try/catch捕获
             var result = client.WordSimEmbedding(word1, word2);
-            System.Diagnostics.Debug.WriteLine(result);
+            //System.Diagnostics.Debug.WriteLine(result);
 
             // 如果有可选参数
+            /*
             var options = new Dictionary<string, object>{
                 {"mode", 0}
             };
+            */
 
             // 带参数调用词义相似度
-            result = client.WordSimEmbedding(word1, word2, options);
-            System.Diagnostics.Debug.WriteLine(result);
+            //var result = client.WordSimEmbedding(word1, word2, options);
+            //System.Diagnostics.Debug.WriteLine(result);
+
+            WordSimEmbeddingSerialize res = new WordSimEmbeddingSerialize();
+            res.score = result["score"].ToString();
+            return res;
         }
 
         // 短文本相似度
@@ -265,6 +271,21 @@ public class DnnlmCn_Sub
 {
     public string word; //句子的切词结果
     public double prob; //该词在句子中的概率值,取值范围[0,1]
+}
+
+// 语义相似度
+[System.Serializable]
+public class WordSimEmbeddingSerialize
+{
+    public string log_id; //请求唯一标识码
+    public string score; //相似度分数
+    public JArray words; //输入的词列表
+}
+
+public class WordSimEmbedding_Sub
+{
+    public string word_1; //输入的word1参数
+    public string word_2; //输入的word2参数
 }
 
 // 情感倾向分析
