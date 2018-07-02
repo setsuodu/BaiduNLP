@@ -22,6 +22,7 @@ public class AipTest : MonoBehaviour
 
     [SerializeField] private Button NLPLexicalButton;
     [SerializeField] private Button NLPSyntacticButton;
+    [SerializeField] private Button WordEmbeddingButton;
 
     void Awake()
     {
@@ -37,12 +38,14 @@ public class AipTest : MonoBehaviour
 
         NLPLexicalButton.onClick.AddListener(NLPLexical);
         NLPSyntacticButton.onClick.AddListener(NLPSyntactic);
+        WordEmbeddingButton.onClick.AddListener(NLPWordEmbedding);
     }
 
     void OnDestroy()
     {
         NLPLexicalButton.onClick.RemoveListener(NLPLexical);
         NLPSyntacticButton.onClick.RemoveListener(NLPSyntactic);
+        WordEmbeddingButton.onClick.RemoveListener(NLPWordEmbedding);
     }
 
     void Start()
@@ -51,7 +54,7 @@ public class AipTest : MonoBehaviour
         client = new Nlp(API_KEY, SECRET_KEY);
     }
 
-    //词法分析
+    // 词法分析
     void NLPLexical()
     {
         //百度是一家高科技公司
@@ -66,10 +69,11 @@ public class AipTest : MonoBehaviour
         Debug.Log(log);
     }
 
-    //依存句法分析
+    // 依存句法分析
     void NLPSyntactic()
     {
         //今天天气怎么样
+        text = "今天天气怎么样";
 
         log = "";
         JArray array = Demo.DepParserDemo(text).items;
@@ -81,7 +85,13 @@ public class AipTest : MonoBehaviour
         Debug.Log(log);
     }
 
-    //使用Newtonsoft.Json 序列化/反序列化
+    // 词向量表示
+    void NLPWordEmbedding()
+    {
+
+    }
+
+    // 使用Newtonsoft.Json 序列化/反序列化
     void HowToUseNewtonsoft()
     {
         var product = new CharacterListItem();
@@ -96,8 +106,7 @@ public class AipTest : MonoBehaviour
         var Object = JsonConvert.DeserializeObject<CharacterListItem>(json);
         //Debug.Log(Object.Name);
     }
-
-
+    
 }
 
 [System.Serializable]
