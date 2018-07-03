@@ -26,6 +26,9 @@ public class AipTest : MonoBehaviour
     [SerializeField] private Button WordEmbeddingButton;
     [SerializeField] private Button DnnlmCnButton;
     [SerializeField] private Button WordSimEmbeddingButton;
+    [SerializeField] private Button SimnetButton;
+    [SerializeField] private Button CommentTagButton;
+    [SerializeField] private Button SentimentClassifyButton;
 
     void Awake()
     {
@@ -44,6 +47,9 @@ public class AipTest : MonoBehaviour
         WordEmbeddingButton.onClick.AddListener(NLPWordEmbedding);
         DnnlmCnButton.onClick.AddListener(NLPDnnlmCn);
         WordSimEmbeddingButton.onClick.AddListener(WordSimEmbedding);
+        SimnetButton.onClick.AddListener(Simnet);
+        CommentTagButton.onClick.AddListener(CommentTag);
+        SentimentClassifyButton.onClick.AddListener(SentimentClassify);
     }
 
     void OnDestroy()
@@ -53,6 +59,9 @@ public class AipTest : MonoBehaviour
         WordEmbeddingButton.onClick.RemoveListener(NLPWordEmbedding);
         DnnlmCnButton.onClick.RemoveListener(NLPDnnlmCn);
         WordSimEmbeddingButton.onClick.RemoveListener(WordSimEmbedding);
+        SimnetButton.onClick.RemoveListener(Simnet);
+        CommentTagButton.onClick.RemoveListener(CommentTag);
+        SentimentClassifyButton.onClick.RemoveListener(SentimentClassify);
     }
 
     void Start()
@@ -124,17 +133,52 @@ public class AipTest : MonoBehaviour
     void WordSimEmbedding()
     {
         //var options = new Dictionary<string, object>{{"mode", 0}};
-
-        string log = "";
         var array = NLPDemo.WordSimEmbeddingDemo("北京", "上海").score;
-        /*
+        Debug.Log(array);
+    }
+
+    // 短文本相似度
+    void Simnet()
+    {
+        var text1 = "浙富股份";
+
+        var text2 = "万事通自考网";
+
+        var array = NLPDemo.SimnetDemo(text1, text2).score;
+        Debug.Log(array);
+    }
+
+    // 评论观点抽取
+    void CommentTag()
+    {
+        text = "三星电脑电池不给力";
+        log = "";
+        JArray array = NLPDemo.CommentTagDemo(text).items;
         for (int i = 0; i < array.Count; i++)
         {
-            log += array[0]["word_1"].ToString() + array[0]["word_2"].ToString();
+            log += array[i]["prop"].ToString()
+                + "," + array[i]["adj"].ToString() 
+                + "," + array[i]["sentiment"].ToString() 
+                + "," + array[i]["begin_pos"].ToString() 
+                + "," + array[i]["end_pos"].ToString() 
+                + "," + array[i]["abstract"].ToString();
             log += " | ";
         }
-        */
-        Debug.Log(array);
+        Debug.Log(log);
+    }
+
+    // 情感倾向分析
+    void SentimentClassify()
+    {
+        text = "苹果是一家伟大的公司";
+        log = "";
+        JArray array = NLPDemo.SentimentClassifyDemo(text).items;
+        for (int i = 0; i < array.Count; i++)
+        {
+            log += array[i]["sentiment"].ToString() + "," + array[i]["confidence"].ToString() + "," + array[i]["positive_prob"].ToString() + "," + array[i]["negative_prob"].ToString();
+            log += " | ";
+        }
+        Debug.Log(log);
     }
 
     // 使用Newtonsoft.Json 序列化/反序列化
