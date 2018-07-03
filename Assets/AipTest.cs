@@ -1,5 +1,5 @@
 ﻿/** 2018.01.10 官方sdk文档
- * http://ai.baidu.com/docs#/NLP-Csharp-SDK/826f1761
+ * http://ai.baidu.com/docs#/NLP-Csharp-SDK/
  */
 using System.Net;
 using UnityEngine;
@@ -149,21 +149,53 @@ public class AipTest : MonoBehaviour
     }
 
     // 评论观点抽取
+    // 调用评论观点抽取，可能会抛出网络等异常，请使用try/catch捕获
     void CommentTag()
     {
-        text = "三星电脑电池不给力";
         log = "";
-        JArray array = NLPDemo.CommentTagDemo(text).items;
+        JArray array = null;
+        try
+        {
+            // 执行的代码，其中可能有异常。一旦发现异常，则立即跳到catch执行。否则不会执行catch里面的内容
+
+            // 不传option会报错
+            // 1 - 酒店
+            // 2 - KTV3 - 丽人
+            // 4 - 美食餐饮（默认）
+            // 5 - 旅游
+            // 6 - 健康
+            // 7 - 教育
+            // 8 - 商业
+            // 9 - 房产
+            // 10 - 汽车
+            // 11 - 生活
+            // 12 - 购物
+            // 13 - 3C
+            var options = new Dictionary<string, object>{{"type", 13}};
+            array = NLPDemo.CommentTagDemo("三星电脑电池不给力", options).items;
+        }
+        catch
+        {
+            // 除非try里面执行代码发生了异常，否则这里的代码不会执行
+            Debug.Log(array);
+        }
+        finally
+        {
+            // 不管什么情况都会执行，包括try catch 里面用了return ,可以理解为只要执行了try或者catch，就一定会执行 finally  
+        }
+
+        ///*
         for (int i = 0; i < array.Count; i++)
         {
             log += array[i]["prop"].ToString()
-                + "," + array[i]["adj"].ToString() 
-                + "," + array[i]["sentiment"].ToString() 
-                + "," + array[i]["begin_pos"].ToString() 
-                + "," + array[i]["end_pos"].ToString() 
-                + "," + array[i]["abstract"].ToString();
-            log += " | ";
+                + " | " + array[i]["adj"].ToString()
+                + " | " + array[i]["sentiment"].ToString()
+                + " | " + array[i]["begin_pos"].ToString()
+                + " | " + array[i]["end_pos"].ToString()
+                + " | " + array[i]["abstract"].ToString();
         }
+        //*/
+
         Debug.Log(log);
     }
 

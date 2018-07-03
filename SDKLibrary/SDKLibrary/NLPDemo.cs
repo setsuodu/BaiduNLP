@@ -167,29 +167,36 @@ namespace NLPForUnity
         }
 
         // 评论观点抽取
-        public static CommentTagSerialize CommentTagDemo(string text)
+        public static CommentTagSerialize CommentTagDemo(string text, Dictionary<string, object> options = null)
         {
             //"三星电脑电池不给力"
 
             client = new Nlp(API_KEY, SECRET_KEY);
 
             // 调用评论观点抽取，可能会抛出网络等异常，请使用try/catch捕获
-            var result = client.CommentTag(text);
-            //System.Diagnostics.Debug.WriteLine(result);
+            JObject result = null;
+            try
+            {
+                //result = client.CommentTag(text); //不传option会报错
+                //System.Diagnostics.Debug.WriteLine(result);
 
-            /*
-            // 如果有可选参数
-            var options = new Dictionary<string, object>{
-                {"type", 13}
-            };
+                // 如果有可选参数
+                //var options = new Dictionary<string, object>{{"type", 13}};
 
-            // 带参数调用评论观点抽取
-            result = client.CommentTag(text, options);
-            //System.Diagnostics.Debug.WriteLine(result);
-            */
+                // 带参数调用评论观点抽取
+                result = client.CommentTag(text, options);
+            }
+            catch
+            {
+                //System.Console.WriteLine("是否存在 ==>> " + (result != null));
+                //System.Console.WriteLine("result子物体 ==>> " + result.Count);
+            }
 
             CommentTagSerialize res = new CommentTagSerialize();
             res.items = (JArray)result["items"];
+            //System.Console.WriteLine("res子物体");
+            //System.Console.WriteLine("finally ==>> " + res.items.First.First);
+
             for (int i = 0; i < res.items.Count; i++)
             {
                 CommentTag_Sub _item = new CommentTag_Sub();
