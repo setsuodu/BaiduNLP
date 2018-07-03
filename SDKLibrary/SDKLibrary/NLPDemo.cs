@@ -167,7 +167,7 @@ namespace NLPForUnity
         }
 
         // 评论观点抽取
-        public static void CommentTagDemo(string text)
+        public static CommentTagSerialize CommentTagDemo(string text)
         {
             //"三星电脑电池不给力"
 
@@ -175,8 +175,9 @@ namespace NLPForUnity
 
             // 调用评论观点抽取，可能会抛出网络等异常，请使用try/catch捕获
             var result = client.CommentTag(text);
-            System.Diagnostics.Debug.WriteLine(result);
+            //System.Diagnostics.Debug.WriteLine(result);
 
+            /*
             // 如果有可选参数
             var options = new Dictionary<string, object>{
                 {"type", 13}
@@ -184,11 +185,26 @@ namespace NLPForUnity
 
             // 带参数调用评论观点抽取
             result = client.CommentTag(text, options);
-            System.Diagnostics.Debug.WriteLine(result);
+            //System.Diagnostics.Debug.WriteLine(result);
+            */
+
+            CommentTagSerialize res = new CommentTagSerialize();
+            res.items = (JArray)result["items"];
+            for (int i = 0; i < res.items.Count; i++)
+            {
+                CommentTag_Sub _item = new CommentTag_Sub();
+                _item.prop = res.items[i]["prop"].ToString();
+                _item.adj = res.items[i]["adj"].ToString();
+                _item.sentiment = int.Parse(res.items[i]["sentiment"].ToString());
+                _item.begin_pos = int.Parse(res.items[i]["begin_pos"].ToString());
+                _item.end_pos = int.Parse(res.items[i]["end_pos"].ToString());
+                _item.abs = res.items[i]["abstract"].ToString();
+            }
+            return res;
         }
 
         // 情感倾向分析
-        public static ResultSerialize SentimentClassifyDemo(string text)
+        public static SentimentClassifySerialize SentimentClassifyDemo(string text)
         {
             //"苹果是一家伟大的公司"
 
@@ -198,19 +214,16 @@ namespace NLPForUnity
             JObject result = client.SentimentClassify(text);
             //System.Diagnostics.Debug.WriteLine(result);
 
-            ResultSerialize res = new ResultSerialize();
-            res.log_id = result["log_id"].ToString();
+            SentimentClassifySerialize res = new SentimentClassifySerialize();
             res.text = result["text"].ToString();
             res.items = (JArray)result["items"];
             for (int i = 0; i < res.items.Count; i++)
             {
-                SentimentClassifySerialize _gammar = new SentimentClassifySerialize();
-                _gammar.text = res.items[i]["text"].ToString();
-                _gammar.items = res.items[i]["items"].ToString();
-                _gammar.sentiment = int.Parse(res.items[i]["sentiment"].ToString());
-                _gammar.confidence = int.Parse(res.items[i]["confidence"].ToString());
-                _gammar.positive_prob = int.Parse(res.items[i]["positive_prob"].ToString());
-                _gammar.negative_prob = int.Parse(res.items[i]["negative_prob"].ToString());
+                SentimentClassify_Sub _sub = new SentimentClassify_Sub();
+                _sub.sentiment = int.Parse(res.items[i]["sentiment"].ToString());
+                _sub.confidence = float.Parse(res.items[i]["confidence"].ToString());
+                _sub.positive_prob = float.Parse(res.items[i]["positive_prob"].ToString());
+                _sub.negative_prob = float.Parse(res.items[i]["negative_prob"].ToString());
             }
             return res;
         }
@@ -303,14 +316,38 @@ public class SimnetSerialize
     public string score; //两个文本相似度得分
 }
 
+// 评论观点抽取
+[System.Serializable]
+public class CommentTagSerialize
+{
+    //public string log_id; //请求唯一标识码
+    public JArray items;
+}
+
+[System.Serializable]
+public class CommentTag_Sub
+{
+    public string prop; //匹配上的属性词
+    public string adj; //匹配上的描述词
+    public int sentiment; //该情感搭配的极性（0表示消极，1表示中性，2表示积极）
+    public int begin_pos; //该情感搭配在句子中的开始位置
+    public int end_pos; //该情感搭配在句子中的结束位置
+    public string abs; //对应于该情感搭配的短句摘要
+}
+
 // 情感倾向分析
 [System.Serializable]
 public class SentimentClassifySerialize
 {
     public string text; //输入的文本内容
-    public string items; //输入的词列表
+    public JArray items; //输入的词列表
+}
+
+[System.Serializable]
+public class SentimentClassify_Sub
+{
     public int sentiment; //表示情感极性分类结果, 0:负向，1:中性，2:正向
-    public int confidence; //表示分类的置信度
-    public int positive_prob; //表示属于积极类别的概率
-    public int negative_prob; //表示属于消极类别的概率
+    public float confidence; //表示分类的置信度
+    public float positive_prob; //表示属于积极类别的概率
+    public float negative_prob; //表示属于消极类别的概率
 }
